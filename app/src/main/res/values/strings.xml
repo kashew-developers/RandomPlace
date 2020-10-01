@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">Random Place</string>
-    <string name="title_activity_maps">Map</string>
+
+    <!-- buttons -->
+    <string name="get_random_place">Get a Random Place</string>
+    <string name="copy">Copy</string>
+    <string name="share">Share</string>
+    <string name="zoom_in">Zoom In</string>
+    <string name="zoom_out">Zoom Out</string>
+
+    <!-- labels -->
+    <string name="coordinates">Coordinates</string>
+    <string name="place_name">Place Name</string>
+    <string name="loading_place_name">Loading Place Name....</string>
+    <string name="place_name_not_found">Could\'nt find Place Name</string>
+
 </resources>
