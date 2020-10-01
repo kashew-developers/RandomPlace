@@ -7,41 +7,80 @@
     android:background="@android:color/black"
     tools:context=".MapsActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/partition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        map:layout_constraintGuide_percent="0.3" />
+
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        map:layout_constraintBottom_toBottomOf="@id/topCurveDecoration"
+        map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintStart_toEndOf="@id/partition"
         map:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/topCurveDecoration"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:background="@drawable/top_curve_decoration"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:background="@drawable/right_curve_decoration"
         android:elevation="10dp"
-        map:layout_constraintBottom_toTopOf="@id/controlPanel"
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent" />
+        map:layout_constraintBottom_toBottomOf="parent"
+        map:layout_constraintStart_toEndOf="@id/partition"
+        map:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/controlPanel"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/colorBackground"
         android:elevation="10dp"
         map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent">
+        map:layout_constraintEnd_toStartOf="@id/partition"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/copyButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/copy"
+            android:focusable="true"
+            android:onClick="onCopyClicked"
+            android:src="@drawable/copy_icon"
+            map:layout_constraintEnd_toEndOf="@id/centerVerticalGuideline"
+            map:layout_constraintTop_toTopOf="parent"
+            map:strokeWidth="0dp" />
+
+        <ImageView
+            android:id="@+id/shareButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/share"
+            android:focusable="true"
+            android:onClick="onShareClicked"
+            android:src="@drawable/share_icon"
+            map:layout_constraintStart_toEndOf="@id/centerVerticalGuideline"
+            map:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/coordinateLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:text="@string/coordinates"
             android:textColor="@color/colorSecondaryText"
             android:textSize="@dimen/secondaryTextSize"
@@ -55,8 +94,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="5dp"
             android:maxLines="2"
             android:minLines="1"
@@ -64,29 +102,28 @@
             android:textColor="@color/colorPrimaryText"
             android:textSize="@dimen/primaryTextSize"
             android:textStyle="bold|italic"
-            map:layout_constraintBottom_toTopOf="@id/placeValue"
-            map:layout_constraintEnd_toStartOf="@id/buttonBarrier"
+            map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintStart_toEndOf="@id/labelBarrier"
-            map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="1.0" />
+            map:layout_constraintTop_toBottomOf="@id/copyButton" />
 
         <TextView
             android:id="@+id/placeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:text="@string/place_name"
             android:textColor="@color/colorSecondaryText"
             android:textSize="@dimen/secondaryTextSize"
             android:textStyle="bold|italic"
             map:layout_constraintBottom_toBottomOf="@id/placeValue"
             map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="@id/placeValue" />
+            map:layout_constraintTop_toTopOf="@id/placeValue"
+            map:layout_constraintVertical_bias="0.0" />
 
         <ProgressBar
             android:id="@+id/placeProgressBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             map:layout_constraintBottom_toBottomOf="@id/placeValue"
             map:layout_constraintStart_toStartOf="@id/labelBarrier"
             map:layout_constraintTop_toTopOf="@id/placeValue" />
@@ -97,19 +134,18 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
             android:ellipsize="end"
-            android:gravity="center_vertical"
             android:maxLines="5"
             android:minLines="3"
             android:text="@string/loading_place_name"
             android:textColor="@color/colorPrimaryText"
             android:textSize="@dimen/primaryTextSize"
             android:textStyle="bold|italic"
-            map:layout_constraintBottom_toTopOf="@id/randomButton"
-            map:layout_constraintEnd_toStartOf="@id/buttonBarrier"
-            map:layout_constraintStart_toEndOf="@id/placeProgressBar" />
+            map:layout_constraintBottom_toTopOf="@id/zoomInButton"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintStart_toEndOf="@id/placeProgressBar"
+            map:layout_constraintTop_toBottomOf="@id/coordinateValue"
+            map:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/labelBarrier"
@@ -118,10 +154,39 @@
             map:barrierDirection="end"
             map:constraint_referenced_ids="coordinateLabel,placeLabel" />
 
+        <ImageView
+            android:id="@+id/zoomInButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/zoom_in"
+            android:focusable="true"
+            android:onClick="onZoomInClicked"
+            android:src="@drawable/zoom_in_icon"
+            map:layout_constraintBottom_toTopOf="@id/randomButton"
+            map:layout_constraintEnd_toStartOf="@id/centerVerticalGuideline" />
+
+        <ImageView
+            android:id="@+id/zoomOutButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/zoom_out"
+            android:focusable="true"
+            android:onClick="onZoomOutClicked"
+            android:src="@drawable/zoom_out_icon"
+            map:layout_constraintBottom_toTopOf="@id/randomButton"
+            map:layout_constraintStart_toEndOf="@id/centerVerticalGuideline" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/randomButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginBottom="20dp"
             android:onClick="onRandomClicked"
             android:text="@string/get_random_place"
@@ -130,76 +195,12 @@
             map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/copyButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/copy"
-            android:focusable="true"
-            android:onClick="onCopyClicked"
-            android:src="@drawable/copy_icon"
-            map:layout_constraintEnd_toEndOf="@id/controlPanel"
-            map:layout_constraintTop_toTopOf="@id/controlPanel"
-            map:strokeWidth="0dp" />
-
-        <ImageView
-            android:id="@+id/shareButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/share"
-            android:focusable="true"
-            android:onClick="onShareClicked"
-            android:src="@drawable/share_icon"
-            map:layout_constraintBottom_toTopOf="@id/randomButton"
-            map:layout_constraintEnd_toEndOf="@id/copyButton"
-            map:layout_constraintStart_toStartOf="@id/copyButton"
-            map:layout_constraintTop_toBottomOf="@id/copyButton"
-            map:layout_constraintVertical_bias="0.0" />
-
-        <ImageView
-            android:id="@+id/zoomInButton"
-            android:layout_width="48dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="10dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/zoom_in"
-            android:focusable="true"
-            android:onClick="onZoomInClicked"
-            android:src="@drawable/zoom_in_icon"
-            map:layout_constraintBottom_toBottomOf="@id/randomButton"
-            map:layout_constraintEnd_toStartOf="@id/randomButton"
-            map:layout_constraintTop_toTopOf="@id/randomButton" />
-
-        <ImageView
-            android:id="@+id/zoomOutButton"
-            android:layout_width="48dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="10dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/zoom_out"
-            android:focusable="true"
-            android:onClick="onZoomOutClicked"
-            android:src="@drawable/zoom_out_icon"
-            map:layout_constraintBottom_toBottomOf="@id/randomButton"
-            map:layout_constraintStart_toEndOf="@id/randomButton"
-            map:layout_constraintTop_toTopOf="@id/randomButton" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/buttonBarrier"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/centerVerticalGuideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            map:barrierDirection="start"
-            map:constraint_referenced_ids="copyButton, shareButton" />
+            android:orientation="vertical"
+            map:layout_constraintGuide_percent="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
