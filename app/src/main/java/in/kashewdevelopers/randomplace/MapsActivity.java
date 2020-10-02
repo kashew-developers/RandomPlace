@@ -2,12 +2,14 @@ package in.kashewdevelopers.randomplace;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +32,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker marker;
     LatLngToPlaceTask.OnPlaceTaskListener placeTaskListener;
     int lastTaskId = 0;
+
+    Toast copiedToast;
 
     // constants
     double MIN_LATITUDE = -85.0, MAX_LATITUDE = 85;
@@ -89,7 +93,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     // initialization
+    @SuppressLint("ShowToast")
     public void initialize() {
+        copiedToast = Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT);
+
         setWidgetInitialVisibility();
         setPlaceTaskListener();
     }
@@ -202,6 +209,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(getString(R.string.app_name), text);
         clipboard.setPrimaryClip(clip);
+        copiedToast.show();
     }
 
     public void onShareClicked(View v) {

@@ -13,5 +13,6 @@
     <string name="place_name">Place Name</string>
     <string name="loading_place_name">Loading Place Name....</string>
     <string name="place_name_not_found">Could\'nt find Place Name</string>
+    <string name="copied">Copied</string>
 
 </resources>
