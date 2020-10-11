@@ -1,6 +1,7 @@
 package in.kashewdevelopers.randomplace;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -31,7 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Marker marker;
     LatLngToPlaceTask.OnPlaceTaskListener placeTaskListener;
-    int lastTaskId = 0;
+    MapViewModel viewModel;
 
     Toast copiedToast;
 
@@ -67,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                viewModel.coordinates = latLng;
                 marker.setPosition(latLng);
                 setCoordinateView(latLng.latitude, latLng.longitude);
                 setPlaceName(latLng.latitude, latLng.longitude);
@@ -85,10 +87,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 LatLng coordinates = marker.getPosition();
+                viewModel.coordinates = coordinates;
                 binding.placeProgressBar.setVisibility(View.VISIBLE);
                 setPlaceName(coordinates.latitude, coordinates.longitude);
             }
         });
+
+        setViewModelData();
     }
 
 
@@ -96,6 +101,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @SuppressLint("ShowToast")
     public void initialize() {
         copiedToast = Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT);
+
+        viewModel = new ViewModelProvider(this).get(MapViewModel.class);
 
         setWidgetInitialVisibility();
         setPlaceTaskListener();
@@ -120,21 +127,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         placeTaskListener = new LatLngToPlaceTask.OnPlaceTaskListener() {
             @Override
             public void onPlaceTaskListener(String placeName, int taskId) {
-                if (lastTaskId == taskId) {
+                if (viewModel.lastTaskId == taskId) {
                     binding.placeProgressBar.setVisibility(View.GONE);
-
+                    viewModel.placeName = placeName;
                     if (placeName == null) {
                         binding.placeValue.setText(getString(R.string.place_name_not_found));
                     } else {
                         binding.placeValue.setText(placeName);
                     }
-                } else {
-                    if (placeName != null) {
-                        binding.placeValue.setText(placeName);
-                    }
                 }
             }
         };
+    }
+
+    public void setViewModelData() {
+        if (viewModel.coordinates != null && marker != null) {
+            setCoordinateView(viewModel.coordinates.latitude, viewModel.coordinates.longitude);
+            marker.setPosition(viewModel.coordinates);
+            marker.setVisible(true);
+
+            if (viewModel.placeName != null && viewModel.placeName.length() > 0) {
+                binding.placeValue.setText(viewModel.placeName);
+                binding.placeProgressBar.setVisibility(View.GONE);
+            } else {
+                setPlaceName(viewModel.coordinates.latitude, viewModel.coordinates.longitude);
+            }
+        }
     }
 
 
@@ -169,11 +187,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double longitude = MIN_LONGITUDE + (MAX_LONGITUDE - MIN_LONGITUDE) * r.nextDouble();
         longitude = Double.parseDouble(decimalFormat.format(longitude));
 
-        LatLng coordinate = new LatLng(latitude, longitude);
-        marker.setPosition(coordinate);
+        viewModel.coordinates = new LatLng(latitude, longitude);
+        marker.setPosition(viewModel.coordinates);
         marker.setVisible(true);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(coordinate));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(viewModel.coordinates));
 
         setCoordinateView(latitude, longitude);
 
@@ -182,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @SuppressWarnings("deprecation")
     public void setPlaceName(double latitude, double longitude) {
-        new LatLngToPlaceTask(this, ++lastTaskId)
+        new LatLngToPlaceTask(this, ++viewModel.lastTaskId)
                 .setOLatLngToPlaceTask(placeTaskListener)
                 .execute(latitude, longitude);
     }
