@@ -13,3 +13,4 @@
 .externalNativeBuild
 .cxx
 *api.xml
+*.mp4
