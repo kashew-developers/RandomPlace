@@ -9,6 +9,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -182,10 +183,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         DecimalFormat decimalFormat = new DecimalFormat("#.000000");
 
         double latitude = MIN_LATITUDE + (MAX_LATITUDE - MIN_LATITUDE) * r.nextDouble();
-        latitude = Double.parseDouble(decimalFormat.format(latitude));
+        try {
+            latitude = Double.parseDouble(decimalFormat.format(latitude));
+        } catch (Exception e) {
+            Log.e("KashewDevelopers", "value : " + latitude + ", Error : " + e.getMessage());
+            latitude = 0;
+        }
 
         double longitude = MIN_LONGITUDE + (MAX_LONGITUDE - MIN_LONGITUDE) * r.nextDouble();
-        longitude = Double.parseDouble(decimalFormat.format(longitude));
+        try {
+            longitude = Double.parseDouble(decimalFormat.format(longitude));
+        } catch (Exception e) {
+            Log.e("KashewDevelopers", "vlaue : " + longitude + ", Error : " + e.getMessage());
+            longitude = 0;
+        }
 
         viewModel.coordinates = new LatLng(latitude, longitude);
         marker.setPosition(viewModel.coordinates);
